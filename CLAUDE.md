@@ -52,7 +52,7 @@ standard Java `ServiceLoader` convention that Keycloak's SPI loader also uses):
 **Admin REST resource** (`twobiers.keycloak.resource` package): a chain of
 `ImpersonationAdminResourceProviderFactory` → `ImpersonationAdminResourceProvider` →
 `ImpersonationAdminResource`, mirroring Keycloak's standard admin extension SPI pattern. The resource
-exposes `POST /admin/realms/{realm}/impersonation-admin-resource/users/{user-id}`, checks the caller
+exposes `POST /admin/realms/{realm}/impersonation/users/{user-id}`, checks the caller
 has impersonate permission via `AdminPermissionEvaluator`/`UserPermissionEvaluator`, then builds a signed
 `ImpersonateActionToken` (180s expiry) and returns it wrapped in an action-token processor URL
 (`ImpersonationResponseDto`). Nothing is impersonated yet at this point.

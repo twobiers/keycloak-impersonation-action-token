@@ -7,7 +7,7 @@ import org.keycloak.services.resources.admin.ext.AdminRealmResourceProvider;
 import org.keycloak.services.resources.admin.ext.AdminRealmResourceProviderFactory;
 
 public class ImpersonationAdminResourceProviderFactory implements AdminRealmResourceProviderFactory {
-	public static final String PROVIDER_ID = "impersonation-admin-resource";
+	public static final String PROVIDER_ID = "impersonation";
 
 	@Override
 	public AdminRealmResourceProvider create(KeycloakSession session) {

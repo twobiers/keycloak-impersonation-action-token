@@ -52,7 +52,7 @@ different path — see [Routing around the built-in endpoint](#routing-around-th
 
 The admin console UI calls the built-in impersonation endpoint at a fixed path:
 `/admin/realms/{realm}/users/{user-id}/impersonation`. This extension can't take over that path, so it
-registers at `/admin/realms/{realm}/impersonation-admin-resource/users/{user-id}` instead.
+registers at `/admin/realms/{realm}/impersonation/users/{user-id}` instead.
 
 To make the stock admin console use this extension without modifying its frontend, put a reverse proxy
 in front of Keycloak that rewrites the built-in path to the extension's path. This repo's
@@ -64,7 +64,7 @@ Equivalent rewrites for other reverse proxies:
 **nginx**
 
 ```nginx
-rewrite ^/admin/realms/(.*)/users/(.*)/impersonation$ /admin/realms/$1/impersonation-admin-resource/users/$2 last;
+rewrite ^/admin/realms/(.*)/users/(.*)/impersonation$ /admin/realms/$1/impersonation/users/$2 last;
 ```
 
 **Traefik** (dynamic config)
@@ -75,21 +75,21 @@ http:
     impersonation-rewrite:
       replacePathRegex:
         regex: "^/admin/realms/([^/]+)/users/([^/]+)/impersonation$"
-        replacement: "/admin/realms/$1/impersonation-admin-resource/users/$2"
+        replacement: "/admin/realms/$1/impersonation/users/$2"
 ```
 
 **Caddy**
 
 ```
 @impersonate path_regexp impersonate ^/admin/realms/([^/]+)/users/([^/]+)/impersonation$
-rewrite @impersonate /admin/realms/{re.impersonate.1}/impersonation-admin-resource/users/{re.impersonate.2}
+rewrite @impersonate /admin/realms/{re.impersonate.1}/impersonation/users/{re.impersonate.2}
 ```
 
 **HAProxy**
 
 ```
 acl is_impersonate path_reg ^/admin/realms/[^/]+/users/[^/]+/impersonation$
-http-request set-path %[path,regsub(^/admin/realms/([^/]+)/users/([^/]+)/impersonation$,/admin/realms/\1/impersonation-admin-resource/users/\2)] if is_impersonate
+http-request set-path %[path,regsub(^/admin/realms/([^/]+)/users/([^/]+)/impersonation$,/admin/realms/\1/impersonation/users/\2)] if is_impersonate
 ```
 
 ## Installation
@@ -110,7 +110,7 @@ container that performs the path rewrite described above. It expects `keycloak.l
 
 ## API reference
 
-### `POST /admin/realms/{realm}/impersonation-admin-resource/users/{user-id}`
+### `POST /admin/realms/{realm}/impersonation/users/{user-id}`
 
 Requests an impersonation link for the given user. Requires a bearer token for a caller with
 impersonate permission on that user (the standard Keycloak admin fine-grained-permission check applies).
