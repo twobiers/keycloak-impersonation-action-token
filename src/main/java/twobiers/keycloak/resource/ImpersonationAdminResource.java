@@ -57,10 +57,21 @@ public class ImpersonationAdminResource {
 
 		URI redirect = Urls.accountBase(session.getContext().getUri().getBaseUri()).build(realm.getName());
 
+		// When impersonating within the same realm, the administrator's own session has to be terminated because their
+		// identity cookie will be replaced by the impersonated user's session. This is deferred until the impersonation
+		// link is actually redeemed (see ImpersonateActionTokenHandler) so that merely requesting a link - e.g. from a
+		// non-browser API integration - does not log the administrator out.
+		RealmModel authenticatedRealm = auth.adminAuth().getRealm();
+		String impersonatorSessionId = null;
+		String sessionState = auth.adminAuth().getToken().getSessionState();
+		if (authenticatedRealm.getId().equals(realm.getId()) && sessionState != null) {
+			impersonatorSessionId = sessionState;
+		}
+
 		ImpersonateActionToken token = new ImpersonateActionToken(user.getId(), redirect.toString(),
 				adminUser.getUsername(),
 				adminUser.getId(),
-				realm.getName(), (int) (Time.currentTimeSeconds() + 180));
+				authenticatedRealm.getName(), (int) (Time.currentTimeSeconds() + 180), impersonatorSessionId);
 
 		String impersonationLink = LoginActionsService.actionTokenProcessor(session.getContext().getUri())
 				.queryParam(Constants.KEY, token.serialize(session, realm, session.getContext().getUri()))
