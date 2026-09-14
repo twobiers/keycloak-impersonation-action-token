@@ -69,8 +69,8 @@ public class ImpersonationAdminResource {
 		}
 
 		ImpersonateActionToken token = new ImpersonateActionToken(user.getId(), redirect.toString(),
-				adminUser.getUsername(),
 				adminUser.getId(),
+				adminUser.getUsername(),
 				authenticatedRealm.getName(), (int) (Time.currentTimeSeconds() + 180), impersonatorSessionId);
 
 		String impersonationLink = LoginActionsService.actionTokenProcessor(session.getContext().getUri())
